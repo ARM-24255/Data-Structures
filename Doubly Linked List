@@ -1,0 +1,118 @@
+#include<stdio.h>
+#include<stdlib.h>
+struct node{
+    int data;
+    struct node *prev;
+    struct node *next;
+}*head=NULL;
+
+struct node *create(int value){
+    struct node *temp;
+    temp=(struct node*)malloc(sizeof(struct node));
+    if(temp==NULL){
+        printf("Memory allocation failed\n");
+        exit(0);
+    }
+    temp->data=value;
+    temp->next=NULL;
+    temp->prev=NULL;
+    return temp;
+};
+
+void insert_end(int value){
+    struct node *newnode=create(value);
+
+    if(head==NULL){
+        head= newnode;
+    }
+    struct node *current=head;
+    while(current->next!=NULL){
+        current=current->next;
+    }
+    current->next=newnode;
+    newnode->prev=current;
+
+}
+
+void insert_left(int value, int key){
+    struct node *newnode=create(value);
+    if(head==NULL){
+        head=newnode;
+        return;
+    }
+    struct node *current=head;
+    while(current!=NULL && current->data!=key){
+        current=current->next;
+    }
+    if(current==NULL){
+        printf("%d not found",key);
+    }
+    newnode->next=current;
+    newnode->prev=current->prev;
+    if(current->prev!=NULL){
+        current->prev->next=newnode;
+    }
+    else{
+        head=newnode;
+    }
+    current->prev=newnode;
+}
+
+void del_spec_value(int key){
+    struct node *current=head;
+    while(current!=NULL && current->data!=key){
+        current=current->next;
+    }
+    if(current->prev!=NULL){
+        current->prev->next=current->next;
+    }
+    else{
+        head=current->next;
+    }
+    if(current->next!=NULL){
+        current->next->prev=current->prev;
+    }
+}
+
+void display(){
+    struct node *temp=head;
+    if(head==NULL){
+        printf("List is empty\n");
+        return;
+    }
+    while(temp!=NULL){
+        printf("%d<->",temp->data);
+        temp=temp->next;
+    }
+    printf("NULL\n");
+    return;
+}
+
+int main(){
+    int choice,key,val;
+    do{
+        printf("MENU\n");
+        printf("\n 1.Insert end\n 2.Insert left\n 3.Delete key\n 4.Display\n 5.Exit\n");
+        printf("Enter choice:");
+        scanf("%d",&choice);
+        switch(choice){
+            case 1: printf("Enter ele to insert");
+                scanf("%d",&val);
+                insert_end(val);
+                break;
+            case 2:printf("Enter element and key");
+                scanf("%d %d",&val,&key);
+                insert_left(val,key);
+                break;
+            case 3:printf("Enter key");
+                scanf("%d",&key);
+                del_spec_value(key);
+                break;
+            case 4:printf("Elements are:");
+                display();
+                break;
+            case 5: break;
+        }
+    }while(choice!=5);
+    return 0;
+}
